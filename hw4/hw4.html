@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Homework #4 </title>
+    <script type="text/javascript">
+        
+
+     var xmlDoc;
+     function loadXML(url) {
+        if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest(); }
+        else {
+        // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+        xmlhttp.open("GET",url,false); //open, send, responseXML are 
+         xmlhttp.send(); //properties of XMLHTTPRequest 
+         
+        if(xmlhttp.readyState != 4 || xmlhttp.status != 200){
+             alert("Error: XML file does not exist!");}
+         
+         xmlDoc=xmlhttp.responseXML;
+         return xmlDoc;
+    }
+         
+    /*    
+    function onRcvData() {
+        if (xmlhttp.readyState==4) {
+            if (xmlhttp.status == 404) {
+                alert("Error: XML file does not exist!");
+                return false;
+            } else if(xmlhttp.status==200) {
+                return true;
+            } 
+        }
+    }    
+    */
+        
+        
+    function display(form){
+        var URL = form.URL.value;
+        xmlDoc = loadXML(URL);
+        
+        if (xmlDoc.documentElement.nodeName=="parsererror") {
+        alert("Error: Error in XML file!");
+        //alert(xmlDoc.documentElement.childNodes[0].nodeValue);
+        }
+       // if(URL != "w4-reference/newslist.xml"){
+        //  alert("XML file does not exist");}
+        else{ 
+          transform(xmlDoc);
+            if(value.length == 0){
+            alert("Error: The XML file containing NO newspaper!");
+            }
+           else{
+          hWin = window.open("", "hw4", "height=3000,width=1000,scrollbars=yes");
+          hWin.document.write(html_text);  
+          hWin.document.close(); }
+        }
+       }
+        //
+
+        
+    function transform(xmlDoc){
+         ELEMENT_NODE = 1;    // MS parser doesn't define Node.ELEMENT_NODE
+         root=xmlDoc.DocumentElement;
+         html_text="<html><head><title>XML Parse Result</title></head><body>";
+         html_text+="<table border='2'>";
+        
+        
+        //get the header
+         news=xmlDoc.getElementsByTagName("Header");
+         newsNodeList=news.item(0).childNodes;
+           html_text+="<tbody>";
+           html_text+="<tr>";
+         for(i=0;i<newsNodeList.length;i++)
+           {  if(newsNodeList.item(i).nodeType==ELEMENT_NODE)
+			   {  header=newsNodeList.item(i).firstChild.nodeValue;
+                html_text+="<th>"+header+"</th>";  }   }
+           html_text+="</tr>";
+        
+        //get the value
+         value=xmlDoc.getElementsByTagName("Row");
+        
+
+        
+         //locati = xmlDoc.getElementsByTagName("Location");
+         x=300;  y=170;
+        
+         for(i=0;i<value.length;i++) // the loop for the row
+           {valueNodeList=value.item(i).childNodes; //get properties of the each row
+            html_text+="<tr>";      //start a new row of the output table
+            for(j=0;j<valueNodeList.length;j++){  
+            if(valueNodeList.item(j).nodeType==ELEMENT_NODE){
+                
+              // list the special cases 
+			if(valueNodeList.item(j).nodeName=="Location"){
+               locationNodeList = valueNodeList.item(j).childNodes;
+                if (locationNodeList.length == 1){
+                    html_text+="<td>  </td>";}
+                else {
+                    html_text += "<td><ul>";
+                    for(k=0;k<locationNodeList.length;k++)
+                        { if(locationNodeList.item(k).nodeType==ELEMENT_NODE)
+                            {
+                             html_text+="<li>"+locationNodeList.item(k).firstChild.nodeValue+"</li>";
+                            } }
+                    html_text += "</td></ul>";
+                }
+
+                //html_text+="<td>"+valueNodeList.item(j).firstChild.nodeValue+ "</td>";
+                //html_text+=valueNodeList.item(j).secondChild.nodeValue+ "</td>";
+			  }
+            
+      
+            else if(valueNodeList.item(j).nodeName=="HomePage"){   
+                 if(valueNodeList.item(j).firstChild == null){
+                html_text+="<td>  </td>";}
+                else{
+		      html_text+="<td><a href='"+valueNodeList.item(j).firstChild.nodeValue+" '>"+valueNodeList.item(j).firstChild.nodeValue+"</a></td>"; }}
+
+            else if(valueNodeList.item(j).nodeName=="Logo"){
+                 if(valueNodeList.item(j).firstChild == null){
+                html_text+="<td>  </td>";}
+                else{
+			html_text+="<td><img src='"+valueNodeList.item(j).firstChild.nodeValue+"' width='"+x+"' height='"+y+"'></td>";  }}
+                
+            else {
+                if(valueNodeList.item(j).firstChild == null){
+                html_text+="<td>  </td>";}
+                else{
+            html_text+="<td>"+valueNodeList.item(j).firstChild.nodeValue+"</td>";}
+		}   }    }
+            html_text+="</tr>";  }
+         html_text+="</tbody>";
+         html_text+="</table>";
+         html_text+="</body></html>";  
+        
+    }
+   
+    </script>   
+    </head>
+    
+    <body>
+        <center>
+            <br /><br /><br /><br /><br /><br />
+        <h3>Enter URL for Newspaper List XML File </h3>
+        <form  >
+            <input type="text" name="URL" maxlength="100" size="30" value="newslist.xml" />
+            <br />
+            <br />
+            <input type="button" name="submit" value="Submit Query" onClick="display(this.form)" />
+        </form>
+    </body>
+</html>
