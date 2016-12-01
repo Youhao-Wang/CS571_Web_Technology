@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <title>Congress Search</title>
+    <meta charset="utf-8" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://use.fontawesome.com/eb62d93e1b.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"></script>
+     <script src="https://rawgit.com/michaelbromley/angularUtils-pagination/master/dirPagination.js"></script>
+
+    
+    
+     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.2.0.js"></script>
+    
+    <script  src="hw8.js"  type="text/javascript"></script>
+
+    <style>
+        .navi_word {background:none;  outline: none; border:0; ;color: #E5E5E5;}
+        .navi_word: hover {color: white;}
+        .whole_content {background-color: #E0E0E0; padding-left: 18%; width : 100%}
+        .change {width: 100%; padding-left: 1%; }
+        .select{color: #d3d7d4;}
+        .select:hover {color:#3D3D3D;}
+        
+        #Bills {display: none}
+        #Committees {display: none}
+        #Favorites {display: none}
+    </style>
+</head>
+    
+    
+    <!--  Header  -->
+<body style = "font-family:Trebuchet MS;  padding:0; margin: 0; ">
+    <div class="container-fluid" id = "main_frame" style="padding:0; margin: 0; height:100%;">
+        
+    <div class="container-fluid navbar navbar-default navbar-fixed-top" id = "First row" style="margin-top:0px; hieght:55px">
+    <div class = "row">
+        <div class = "col-md-1 col-xs-1">
+            <h3>&nbsp;&nbsp;<button class="fa fa-bars" aria-hidden="true" id ="hide" style="border:0; outline:none; background-color: white"></button></h3>
+        </div>
+        <div class="col-md-11 col-xs-11">
+            <center><h2><a href=" http://sunlightfoundation.com/" target="_blank">   
+            <img src ="http://cs-server.usc.edu:45678/hw/hw8/images/logo.png"></a>&nbsp;Congress API</h2></center>
+        </div>
+    </div>
+    </div>
+    
+        
+        
+        <!--  Navigation  -->
+    <div class="container" style = " width: 100%; padding-top: 75px;" ng-controller="MyController">
+    <div class="row" style = "height:100%; ">
+        <div id = "navigation_bar" class="col-md-2 col-xs-2 navbar navbar-default navbar-fixed-top" style="background-color:#3D3D3D; color: #E5E5E5; height:100%; margin-top: 75px; overflow:hidden">
+            <br><h3><button class= "navi_word" onclick= "click_legis()" ><span class="fa fa-user" aria-hidden="true"></span><span class="hidden-xs">&nbsp;Legislators</span ></button></h3><br>
+            <h3><button class= "navi_word" onclick= "click_bills()" ><span class="fa fa-file-o" aria-hidden="true"></span><span class="hidden-xs">&nbsp;Bills</span></button></h3><br>
+            <h3><button class= "navi_word" onclick= "click_commit()" ><span class="fa fa-sign-in" aria-hidden="true"></span><span class="hidden-xs">&nbsp;Committees</span></button></h3><br>
+            <h3><button class= "navi_word" onclick= "click_favo()" ><span class="fa fa-star" aria-hidden="true"></span><span class="hidden-xs">&nbsp;Favorites</span></button></h3><br><br>
+        </div>
+        
+        
+    <div id = "whole_content"  class="whole_content col-md-10 col-xs-10">    
+        
+        
+        
+        
+        
+    
+        <!--  Legislators  -->
+    <div id="myCarousel1" class="carousel slide" data-interval="false" >
+	<!-- Bootstrap Carousel -->
+    <div class="carousel-inner">
+    <div class="item active">
+        
+        <div id = "Legislators" style="background-color: #E0E0E0; " >
+            <h2>Legislators</h2><hr style = "border-top:1px solid #74787c;">
+            
+            <div class="container" style="background-color: white; border:1px solid #74787c; width: 100%; border-radius:5px; box-shadow: #666 0px 0px 10px;">
+               <ul class="nav nav-tabs" style = "font-size:20px;">
+                <li class="active"><a data-toggle="pill" href="#by_state" class = "select">By State</a></li>
+                <li><a data-toggle="pill" href="#by_house" class = "select">House</a></li>
+                <li><a data-toggle="pill" href="#by_senate" class = "select">Senate</a></li>
+               </ul>
+                
+                
+                
+                <!--  By State  -->
+                <div class="tab-content" >
+                <div id="by_state" class = "tab-pane fade active in" >
+                <div class ="container-fluid" style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0;" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4  >Legislators By State</h4>
+                    </div>
+                    <div class="col-md-6 col-xs-0"></div>
+                    <div class="col-md-3 col-xs-6" style="text-align:right">
+                    <select name="state" id="state" class="form-control" ng-model="cc">
+                        <option value="">All States</option>
+                        <option value="Alabama">Alabama</option>
+                        <option value="Alaska">Alaska</option>
+                        <option value="Arizona">Arizona</option>
+                        <option value="Arkansas">Arkansas</option>
+                        <option value="California">California</option>
+                        <option value="Colorad">Colorado</option>
+                        <option value="Connecticut">Connecticut</option>
+                        <option value="Delaware">Delaware</option>
+                        <option value="District Of Columbia">District Of Columbia</option>
+                        <option value="Florida">Florida</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Hawaii">Hawaii</option>
+                        <option value="Idaho">Idaho</option>
+                        <option value="Illinois">Illinois</option>
+                        <option value="Indiana">Indiana</option>
+                        <option value="Iowa">Iowa</option>
+                        <option value="Kansas">Kansas</option>
+                        <option value="Kentucky">Kentucky</option>
+                        <option value="Louisiana">Louisiana</option>
+                        <option value="Maine">Maine</option>
+                        <option value="Maryland">Maryland</option>
+                        <option value="Massachusetts">Massachusetts</option>
+                        <option value="Michigan">Michigan</option>
+                        <option value="Minnesota">Minnesota</option>
+                        <option value="Mississippi">Mississippi</option>
+                        <option value="Missouri">Missouri</option>
+                        <option value="Montana">Montana</option>
+                        <option value="Nebraska">Nebraska</option>
+                        <option value="Nevada">Nevada</option>
+                        <option value="New Hampshire">New Hampshire</option>
+                        <option value="New Jersey">New Jersey</option>
+                        <option value="New Mexico">New Mexico</option>
+                        <option value="New York">New York</option>
+                        <option value="North Carolina">North Carolina</option>
+                        <option value="North Dakota">North Dakota</option>
+                        <option value="Ohio">Ohio</option>
+                        <option value="Oklahoma">Oklahoma</option>
+                        <option value="Oregon">Oregon</option>
+                        <option value="Pennsylvania">Pennsylvania</option>
+                        <option value="Rhode Island">Rhode Island</option>
+                        <option value="South Carolina">South Carolina</option>
+                        <option value="South Dakota">South Dakota</option>
+                        <option value="Tennessee">Tennessee</option>
+                        <option value="Texas">Texas</option>
+                        <option value="Utah">Utah</option>
+                        <option value="Vermont">Vermont</option>
+                        <option value="Virginia">Virginia</option>
+                        <option value="Washington">Washington</option>
+                        <option value="West Virginia">West Virginia</option>
+                        <option value="Wisconsin">Wisconsin</option>
+                        <option value="Wyoming">Wyoming</option>  
+                    </select>
+                    </div>
+                </div>
+                    
+                    <div class="table-responsive" style="border:none">
+                    <table class="table  table-hover" id = "whole_table" style = "font-size:18px; ">
+                    <thead id = "table_head" style = "font-size:20px;" >
+                      <tr>
+                        <th>Party</th>
+                        <th>Name</th>
+                        <th>Chamber</th>
+                        <th>District</th>
+                        <th>State</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp; </th>
+                          
+                      </tr>
+                    </thead>
+                    <tbody id = "table_body" >
+                        <tr dir-paginate ="item in items | filter: cc | orderBy : ['state','last_name'] |  itemsPerPage: 10 " pagination-id = "bystate">
+                            <th ng-if = "item.party == 'R'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/r.png' style= 'width:18px; height:18px;'></image></th>
+                            <th ng-if = "item.party == 'D'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/d.png' style= 'width:18px; height:18px;'></image></th>
+                            <th ng-if = "item.party == 'I'" style = 'width: 12%;'></th>
+                            
+                            <th style = 'width: 25%;'>{{item.last_name + "," + item.first_name}}</th>
+                            
+                            <th ng-if = "item.chamber == 'house'" style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                            <th ng-if = "item.chamber == 'senate'" style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                            
+                            <th ng-if = "item.district == null " style = 'width: 15%;'>N.A.</th>
+                            <th ng-if = "item.district != null " style = 'width: 15%;'>District&nbsp;{{item.district}}</th>
+                            <th style = 'width: 20%;'>{{item.state_name}}</th>
+                            <th><button ng-click="view_detail1(item)"  type='button'  class='btn btn-primary'>View Details</button></th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                    <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "bystate"></dir-pagination-controls>
+                    </div>
+                </div>
+                </div>
+                
+                
+                
+                
+                 <!--  By House  -->
+                <div id="by_house"  class = "tab-pane fade">
+                <div  class ="container" style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4  >Legislators By House</h4>
+                    </div>
+                    <div class="col-md-6 col-xs-0"></div>
+                    <div class="col-md-3 col-xs-6" style="text-align:right">
+                   <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                    </div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>Party</th>
+                        <th>Name</th>
+                        <th>Chamber</th>
+                        <th>District</th>
+                        <th>State</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      </tr>
+                    </thead>
+                    <tbody id = "table_body" style = "font-size:18px;">
+                        <tr dir-paginate ="item in items | filter:'house' | filter: search | orderBy : 'last_name' |  itemsPerPage: 10 " pagination-id = "byhouse">
+                            <th ng-if = "item.party == 'R'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/r.png' style= 'width:18px; height:18px;'></image></th>
+                            <th ng-if = "item.party == 'D'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/d.png' style= 'width:18px; height:18px;'></image></th>
+                            <th ng-if = "item.party == 'I'" style = 'width: 12%;'></th>
+                            
+                            <th style = 'width: 25%;'>{{item.last_name + "," + item.first_name}}</th>
+                            
+                            <th ng-if = "item.chamber == 'house'" style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                            <th ng-if = "item.chamber == 'senate'" style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                            
+                            <th ng-if = "item.district == null " style = 'width: 15%;'>N.A.</th>
+                            <th ng-if = "item.district != null " style = 'width: 15%;'>District&nbsp;{{item.district}}</th>
+                            <th style = 'width: 20%;'>{{item.state_name}}</th>
+                            <th> <button type='button' ng-click="view_detail1(item)" class='btn btn-primary'>View Details</button></th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                    <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "byhouse"></dir-pagination-controls>
+                    </div>
+                </div> 
+                </div>
+                    
+                    
+                    
+                    
+                <!--  By Senate  -->
+                <div id="by_senate"  class = "tab-pane fade">
+                <div  class ="container" style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4  >Legislators By Senate</h4>
+                    </div>
+                    <div class="col-md-6 col-xs-0"></div>
+                    <div class="col-md-3 col-xs-6" style="text-align:right">
+                   <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                    </div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>Party</th>
+                        <th>Name</th>
+                        <th>Chamber</th>
+                        <th>State</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      </tr>
+                    </thead>
+                    <tbody id = "table_body" style = "font-size:18px;">
+                        <tr dir-paginate ="item in items | filter:'senate' | filter: search | orderBy : 'last_name' |  itemsPerPage: 10 " pagination-id = "bysenate">
+                            <th ng-if = "item.party == 'R'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/r.png' style= 'width:18px; height:18px;'></image></th>
+                            <th ng-if = "item.party == 'D'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/d.png' style= 'width:18px; height:18px;'></image></th>
+                            <th ng-if = "item.party == 'I'" style = 'width: 12%;'></th>
+                            
+                            <th style = 'width: 25%;'>{{item.last_name + "," + item.first_name}}</th>
+                            
+                            <th ng-if = "item.chamber == 'house'" style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                            <th ng-if = "item.chamber == 'senate'" style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                            
+                            <th style = 'width: 20%;'>{{item.state_name}}</th>
+                            <th> <button type='button' ng-click="view_detail1(item)" class='btn btn-primary'>View Details</button></th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                    <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "bysenate"></dir-pagination-controls>
+                    </div>
+                </div> 
+                </div>
+                    
+            </div>
+            </div>
+        </div>
+        </div>
+        
+        
+        
+        
+         
+        
+        <!--  Ligistors - View Detial -->
+            <div  class="item">
+            <div  id = "Legislators_detail" style="background-color: #E0E0E0">
+                <h2>Legislators</h2><hr style = "border-top:1px solid #74787c;">
+                <div class="container" style="background-color: white; border:1px solid #74787c; width: 100%; border-radius:5px; box-shadow: #666 0px 0px 10px; ">
+                    <div class = "row" >
+                        <div class="col-md-3 col-xs-6">
+                        <button  style="text-align:left" ng-click="go_back1()" class="btn btn-default go_back1" ><span class="glyphicon glyphicon-chevron-left"></span></button><span style = "font-size: 27px;">&nbsp;Details</span></div>
+                        <div class="col-md-6 col-xs-0"></div>
+                        <div class="col-md-3 col-xs-6" style="text-align:right">
+                        <button class="btn btn-default btn-lg" ng-click="favorite_legislator(legislator)"><i id="{{legislator.bioguide_id}}" class="fa fa-star-o" style=" width: 20px; height: 20px;"></i></button></div>
+                   </div> 
+                    
+                    <div class = "row" >
+                    <hr style = "border-top:0.2px solid  #74787c;margin-top: 0.3em; margin-bottom: 0.4em; color :  #74787c">
+                    <div class="col-md-6 col-xs-12">
+                   
+                   <div class = "row">  
+                       <div class = "col-md-6 col-xs-12">
+                            <span><img ng-src= "https://theunitedstates.io/images/congress/225x275/{{legislator.bioguide_id}}.jpg"  style= 'width:200px; height:240px; margin-left: 40px;'></span>
+                        </div>
+                        <div class = "col-md-5 col-xs-12">
+                            <table class = "table" style = "font-size:18px;">
+                            <tr>&nbsp; </tr>
+                            <tr ><td>{{legislator.title +"." + legislator.last_name + "," + legislator.first_name }} </td></tr>
+                            <tr ><td><a ng-href="{{legislator.oc_email}}">{{legislator.oc_email}} </a> </td></tr>
+                            <tr ><td>Chamber: &nbsp;{{legislator.chamber}} </td></tr>
+                            <tr ><td>Contact: &nbsp;<a ng-href="{{legislator.oc_email}} "target="_blank">{{legislator.phone}}</a></td></tr>
+                            <tr ><td ng-if = "legislator.party == 'R'" ><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/r.png' style= 'width:18px; height:18px;'></image>Republican</td></tr>
+                            <tr ><td ng-if = "legislator.party == 'D'" ><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/d.png' style= 'width:18px; height:18px;'></image>Democrat</td></tr>
+                            </table>
+                        </div>
+                    </div>   
+                        
+                        <table class = "table" style = "font-size:18px;" >
+                        <tr><td class="hidden-xs">Start Term</td>     <td>{{legislator.term_start}} </td></tr>
+                        <tr><td class="hidden-xs">End Term</td>     <td>{{legislator.term_end}} </td></tr>
+                        <tr><td class="hidden-xs">Term</td><td class="hidden-xs"><uib-progressbar  value= "term" type="success">{{term}} %</uib-progressbar></td></tr>
+                        <tr><td class="hidden-xs">Office</td>     <td>{{legislator.office}} </td></tr>
+                        <tr><td class="hidden-xs">State</td>     <td>{{legislator.state_name}} </td></tr>
+                        <tr><td class="hidden-xs">Fax</td>     <td> <a ng-href="{{legislator.fax}}" target="_blank">{{legislator.fax}} </a></td></tr>
+                        <tr><td class="hidden-xs">Birthday</td>     <td>{{legislator.birthday}} </td></tr>
+                        <tr><td class="hidden-xs">Social Links</td> <td>    
+                            <span><a ng-href="http://twitter.com/{{legislator.twitter_id}}" target="_blank">   <img src= 'http://cs-server.usc.edu:45678/hw/hw8/images/t.png' style= 'width:25px; height:25px;'></a></span>
+                            <span><a ng-href="http://facebook.com/{{legislator.facebook_id}}" target="_blank">   <img src= 'http://cs-server.usc.edu:45678/hw/hw8/images/f.png' style= 'width:25px; height:25px;'></a></span>
+                            <span><a ng-href="{{legislator.website}}" target="_blank">   <img src= 'http://cs-server.usc.edu:45678/hw/hw8/images/w.png' style= 'width:25px; height:25px;'></a></span>
+                        </td></tr>
+                    </table>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <h4>Committees</h4>
+                        <table class = "table" style = "font-size:18px;" >
+                        <tr>
+                            <th>Chamber</th>
+                            <th>Committee ID</th>
+                            <th class="hidden-xs">Name</th>
+                       </tr>
+                        <tr ng-repeat = "detail_com in detail_coms">
+                            <td>{{detail_com.chamber}}</td>
+                            <td>{{detail_com.committee_id}}</td>
+                            <td class="hidden-xs">{{detail_com.name}}</td>
+                        </tr>
+                        </table>
+                        
+                        <h4>Bills</h4>
+                        <table class = "table" style = "font-size:18px;" >
+                        <tr>
+                            <th>Bill ID</th>
+                            <th class="hidden-xs">Ttile</th>
+                            <th class="hidden-xs">Chamber</th>
+                            <th class="hidden-xs">Bill Type</th>
+                            <th class="hidden-xs">Congress</th>
+                            <th>Link</th>
+                       </tr>
+                        <tr ng-repeat = "detail_bill in detail_bills">
+                            <td>{{detail_bill.bill_id}}</td>
+                            <td class="hidden-xs">{{detail_bill.official_title}}</td>
+                            <td class="hidden-xs">{{detail_bill.chamber}}</td>
+                             <td class="hidden-xs">{{detail_bill.bill_type}}</td>
+                             <td class="hidden-xs">{{detail_bill.congress}}</td>
+                             <td><a ng-href = "{{detail_bill.last_version.urls.pdf}} "target="_blank">Link</a></td>
+                        </tr>
+                        </table>
+                         </div>
+                    </div>
+                    
+                        
+                </div>
+            </div>
+            </div>
+        
+        
+        
+        
+        </div>
+        </div>
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <!--  Bills  -->
+        
+    <div id="myCarousel2" class="carousel slide" data-interval="false">
+	<!-- Bootstrap Carousel -->
+    <div class="carousel-inner">
+     <div class="item active">
+            
+            
+        <div id = "Bills"  style="background-color: #E0E0E0 ">
+            <h2 >Bills</h2><hr style = "border-top:1px solid #74787c;">
+            
+            <div class="container" style="background-color: white; border:1px solid #74787c; width: 100%; border-radius:5px; box-shadow: #666 0px 0px 10px; ">
+              <ul class="nav nav-tabs" style = "font-size:22px;">
+                <li class="active"><a data-toggle="pill" href="#active_bills" class = "select">Active Bills</a></li>
+                <li><a data-toggle="pill" href="#new_bills" class = "select">New Bills</a></li>
+               </ul>
+                
+                
+                <!--  Active Bills  -->
+                <div class="tab-content">
+                <div id="active_bills" class = "tab-pane fade active in">
+                <div class ="container"style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4  >Active Bills</h4>
+                    </div>
+                    <div class="col-md-6 col-xs-0"></div>
+                    <div class="col-md-3 col-xs-6" style="text-align:right">
+                     <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                    </div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table" style = "font-size:18px;">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>Bill ID</th>
+                        <th>Bill Type</th>
+                        <th>Title</th>
+                        <th>Chamber</th>
+                        <th>Intorducted On</th>
+                        <th>Sponsor</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      </tr>
+                    </thead>
+                           
+                    <tbody id = "table_body"  >
+                         <tr dir-paginate ="bill in bills | filter: search |  itemsPerPage: 10 " pagination-id = "activebills">
+                            <th style = 'width: 15%;'>{{bill.bill_id | uppercase}}</th>
+                            <th style = 'width: 10%;'> {{bill.bill_type | uppercase}} </th>
+                            <th style = 'width: 30%;'> {{bill.official_title}} </th>
+                            
+                            <th ng-if = "bill.chamber == 'house'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                            <th ng-if = "bill.chamber == 'senate'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                            <th style = 'width: 15%;'> {{bill.introduced_on}} </th>
+                            <th style = 'width: 12%;'> {{bill.sponsor.title + "."+ bill.sponsor.last_name +"," + bill.sponsor.first_name}} </th>
+                            <th> <button type='button' class='btn btn-primary' ng-click="view_detail2(bill)">View Details</button></th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                    <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "activebills"></dir-pagination-controls>
+                    </div>
+                </div>   
+            </div>
+                    
+                    
+                    
+                    
+               
+                    
+                    <!--  new Bills  -->
+                    <div id="new_bills" class = "tab-pane fade">
+                    <div class ="container"style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                    <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4  >New Bills</h4>
+                    </div>
+                    <div class="col-md-6 col-xs-0"></div>
+                    <div class="col-md-3 col-xs-6" style="text-align:right">
+                     <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                    </div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table" style = "font-size:18px;">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>Bill ID</th>
+                        <th>Bill Type</th>
+                        <th>Title</th>
+                        <th>Chamber</th>
+                        <th>Intorducted On</th>
+                        <th>Sponsor</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      </tr>
+                    </thead>
+                           
+                    <tbody>
+                         <tr dir-paginate ="newbill in newbills | filter: search | itemsPerPage: 10 " pagination-id = "nbills">
+                            <th style = 'width: 15%;'>{{newbill.bill_id | uppercase}}</th>
+                            <th style = 'width: 10%;'> {{newbill.bill_type | uppercase}} </th>
+                            <th style = 'width: 30%;'> {{newbill.official_title}} </th>
+                            <th ng-if = "newbill.chamber == 'house'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                            <th ng-if = "newbill.chamber == 'senate'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                            <th style = 'width: 15%;'> {{newbill.introduced_on}} </th>
+                            <th style = 'width: 12%;'> {{newbill.sponsor.title + "."+ newbill.sponsor.last_name +"," + newbill.sponsor.first_name}} </th>  
+                            <th> <button type='button' class='btn btn-primary' ng-click="view_detail2(newbill)">View Details</button></th>    
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                    <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "nbills"></dir-pagination-controls>
+                    </div>
+                </div>   
+                </div>
+                </div>
+                    
+            </div>
+            </div>
+        </div>
+         
+        
+        
+        
+        
+         <!--  Bills - View Detial -->
+            <div class="item">
+            <div id = "Bills_detail"  style="background-color: #E0E0E0">
+                <h2>Bills</h2><hr style = "border-top:1px solid #74787c;">
+                <div class="container" style="background-color: white; border:1px solid #74787c; width: 100%; border-radius:5px; box-shadow: #666 0px 0px 10px; ">   
+                    
+                    <div class = "row" >
+                        <div class="col-md-3 col-xs-6">
+                        <button  style="text-align:left " ng-click="go_back2()" class="btn btn-default go_back2" ><span class="glyphicon glyphicon-chevron-left"></span></button><span style = "font-size: 27px;">&nbsp;Details</span></div>
+                        <div class="col-md-6 col-xs-0"></div>
+                        <div class="col-md-3 col-xs-6" style="text-align:right">
+                        <button class="btn btn-default btn-lg" ng-click="favorite_bill(bill_detail)"><span id="{{bill_detail.bill_id}}" class="fa fa-star-o" style=" width: 20px; height: 20px;"></span></button></div>
+                   </div> 
+                    
+                    
+                  <div class = "row" style ="height : 100%;">
+                    <hr style = "border-top:0.2px solid #74787c;margin-top: 0.3em; margin-bottom: 0.4em;">
+                    <div class="col-md-6 col-xs-12">
+                    <table class = "table" style = "font-size:18px;" >
+                        <tr><td>Bill ID</td>     <td>{{bill_detail.bill_id | uppercase}} </td></tr>
+                        <tr class="hidden-xs"><td>Title</td>     <td>{{bill_detail.official_title}} </td></tr>
+                        <tr><td>Bill Type</td>     <td>{{bill_detail.bill_type | uppercase}} </td></tr>
+                        <tr><td>Sponsor</td>     <td>{{bill_detail.sponsor.title + "."+ bill_detail.sponsor.last_name +"," + bill_detail.sponsor.first_name}} </td></tr>
+                        <tr><td>Chamber</td>     <td>{{bill_detail.chamber}} </td></tr>
+                        <tr><td>Status</td>     <td ng-if = "bill_detail.history.active ==true ">Active</td>   <td ng-if = "bill_detail.history.active ==false ">New</td></tr>
+                        <tr><td>Intorduced On</td>     <td>{{bill_detail.introduced_on}} </td></tr>
+                        <tr><td>Congress URL</td>     <td ><a ng-href="{{bill_detail.urls.congress}}" target="_blank">URL</a> </td></tr>
+                        <tr><td>Version State</td>     <td>{{bill_detail.last_version.version_name}} </td></tr>
+                        <tr><td>Bill URL</td>     <td><a ng-href="{{bill_detail.last_version.urls.pdf}}" target="_blank">Link</a> </td></tr>
+                    </table>
+                    </div>
+                      
+                     <div class="col-md-6 hidden-xs" style ="height : 100%;" >
+                         <object width="100%" height="500"  data="{{bill_detail.last_version.urls.pdf}}">
+                        </object>
+                    </div>
+                 </div>
+                    
+                </div>
+                    
+            </div>
+            </div>
+         
+    </div> 
+    </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          <!--  Committees  -->
+        <div id = "Committees"  style="background-color: #E0E0E0 ">
+            <h2 >Committees</h2><hr style = "border-top:1px solid #74787c;">
+            
+            <div class="container" style="background-color: white; border:1px solid #74787c; width: 100%; border-radius:5px; box-shadow: #666 0px 0px 10px; ">
+              <ul class="nav nav-tabs" style = "font-size:22px;">
+                <li class="active"><a data-toggle="pill" href="#com_house" class = "select">House</a></li>
+                <li><a data-toggle="pill" href="#com_senate" class = "select">Senate</a></li>
+                <li><a data-toggle="pill" href="#new_joint" class = "select">Joint</a></li>
+               </ul>
+                
+                
+                <!--  Committees - House  -->
+                <div class="tab-content">
+                <div id="com_house" class = "tab-pane fade active in">
+                <div class ="container"style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4>House</h4>
+                    </div>
+                    <div class="col-md-6 col-xs-0"></div>
+                    <div class="col-md-3 col-xs-6" style="text-align:right">
+                     <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                    </div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table" style = "font-size:18px;">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>Chamber</th>
+                        <th>Committee ID</th>
+                        <th>Name</th>
+                        <th>Parent Committee</th>
+                        <th>Contact</th>
+                        <th>Office</th>
+                      </tr>
+                    </thead>
+                           
+                    <tbody id = "table_body"  >
+                         <tr dir-paginate ="committee in committees | filter: 'house' |filter: search |   itemsPerPage: 10 " pagination-id = "comhouse">
+                            <th style = 'width: 8%;'><button class="btn btn-default btn-lg" ng-click="favorite_committee(committee)"><span id="{{committee.committee_id}}" class="fa fa-star-o" style=" width: 20px; height: 20px;"></span></button></th>
+                            <th style = 'width: 10%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                             
+                            <th style = 'width: 10%;'> {{committee.committee_id}} </th>
+                            <th style = 'width: 40%;'> {{committee.name}} </th>
+                            <th style = 'width: 10%;'> {{committee.parent_committee_id}} </th>
+                            <th ng-if = "committee.phone == null " style = 'width: 10%;'> N.A. </th>
+                            <th ng-if = "committee.phone != null " style = 'width: 10%;'> {{committee.phone}} </th>
+                            <th ng-if = "committee.office == null " style = 'width: 10%;'> N.A. </th>
+                            <th ng-if = "committee.office != null " style = 'width: 10%;'> {{committee.office}} </th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                    <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "comhouse"></dir-pagination-controls>
+                    </div>
+                </div>   
+            </div>
+                    
+                    
+                    
+                    
+               
+                    
+                    <!--  Committees- Senate  -->
+                <div id="com_senate" class = "tab-pane fade">
+                <div class ="container"style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4>Senate</h4>
+                    </div>
+                    <div class="col-md-6 col-xs-0"></div>
+                    <div class="col-md-3 col-xs-6" style="text-align:right">
+                     <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                    </div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table" style = "font-size:18px;">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>Chamber</th>
+                        <th>Committee ID</th>
+                        <th>Name</th>
+                        <th>Parent Committee</th>
+                      </tr>
+                    </thead>
+                           
+                    <tbody id = "table_body"  >
+                         <tr dir-paginate ="committee in committees | filter: 'senate' |filter: search |   itemsPerPage: 10 " pagination-id = "comsentate">
+                            <th style = 'width: 8%;'><button class="btn btn-default btn-lg" ng-click="favorite_committee(committee)"><span id="{{committee.committee_id}}" class="fa fa-star-o" style=" width: 20px; height: 20px;"></span></button></th>
+                            <th style = 'width: 10%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                             
+                            <th style = 'width: 10%;'> {{committee.committee_id}} </th>
+                            <th style = 'width: 60%;'> {{committee.name}} </th>
+                            <th style = 'width: 10%;'> {{committee.parent_committee_id}} </th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                    <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "comsentate"></dir-pagination-controls>
+                    </div>
+                </div>   
+            </div>
+                
+                
+                
+                
+                
+                
+                <!--  Committees- Joint  -->
+                <div id="new_joint" class = "tab-pane fade">
+                <div class ="container"style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4>Joint</h4>
+                    </div>
+                    <div class="col-md-6 col-xs-0"></div>
+                    <div class="col-md-3 col-xs-6" style="text-align:right">
+                     <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                    </div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table" style = "font-size:18px;">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>Chamber</th>
+                        <th>Committee ID</th>
+                        <th>Name</th>
+                      </tr>
+                    </thead>
+                           
+                    <tbody id = "table_body"  >
+                         <tr dir-paginate ="committee in committees | filter: 'joint' |filter: search |   itemsPerPage: 10 " pagination-id = "comjoint">
+                            <th style = 'width: 8%;'><button class="btn btn-default btn-lg" ng-click="favorite_committee(committee)"><span id="{{committee.committee_id}}" class="fa fa-star-o" style=" width: 20px; height: 20px;"></span></button></th>
+                            <th style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Joint</span></image></th>
+                             
+                            <th style = 'width: 15%;'> {{committee.committee_id}} </th>
+                            <th style = 'width: 60%;'> {{committee.name}} </th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                    <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "comjoint"></dir-pagination-controls>
+                    </div>
+                </div>   
+            </div>
+            
+                                      
+            </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+           <!--  Favorite  -->
+        <div id = "Favorites"  style="background-color: #E0E0E0 ">
+            <h2 >Favorites</h2><hr style = "border-top:1px solid #74787c;">
+            
+            <div class="container" style="background-color: white; border:1px solid #74787c; width: 100%; border-radius:5px; box-shadow: #666 0px 0px 10px; ">
+              <ul class="nav nav-tabs" style = "font-size:22px;">
+                <li class="active"><a data-toggle="pill" href="#favorite_le" class = "select">Ligislators</a></li>
+                <li><a data-toggle="pill" href="#favorite_bi" class = "select">Bills</a></li>
+                <li><a data-toggle="pill" href="#favorite_co" class = "select">Committees</a></li>
+               </ul>
+                
+                
+                <!--  Favorite: Legislators -->
+                <div class="tab-content">
+                <div id="favorite_le" class = "tab-pane fade active in">
+                <div class ="container"style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4>Favorite Legislators</h4>
+                    </div>
+                    <div class="col-md-9 col-xs-6"></div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table" style = "font-size:18px;">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>Image</th>
+                        <th>Party</th>
+                        <th>Name</th>
+                        <th>Chamber</th>
+                        <th>State</th>
+                        <th>Email</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      </tr>
+                    </thead>
+                           
+                    <tbody id = "table_body"  >
+                            <tr ng-repeat = "favorite_legislator in favorite_legislators">
+                            <th style = 'width: 8%;'><button class="btn btn-default btn-lg" ng-click="delete_legislator(favorite_legislator)"><span class="fa fa-trash" style=" width: 20px; height: 20px;"></span></button></th>
+                            <th> <img ng-src= "https://theunitedstates.io/images/congress/225x275/{{favorite_legislator.bioguide_id}}.jpg"  style= 'width:32px; height:40px;'> </th>
+                            <th ng-if = "favorite_legislator.party == 'R'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/r.png' style= 'width:18px; height:18px;'></image></th>
+                            <th ng-if = "favorite_legislator == 'D'" style = 'width: 12%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/d.png' style= 'width:18px; height:18px;'></image></th>
+                            <th ng-if = "favorite_legislator == 'I'" style = 'width: 12%;'></th>
+                            <th>{{favorite_legislator.last_name + "," + favorite_legislator.first_name}}</th>
+                            <th ng-if = "favorite_legislator.chamber == 'house'" style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                            <th ng-if = "favorite_legislator.chamber == 'senate'" style = 'width: 15%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                            <th>{{favorite_legislator.state_name}}</th>
+                            <th><a ng-href="{{favorite_legislator.oc_email}}">{{favorite_legislator.oc_email}} </a>  </th>
+                             <th><button ng-click="view_detail1(favorite_legislator)"  type='button'  class='btn btn-primary'>View Details</button></th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                </div>   
+            </div>
+                    
+                    
+                    
+                    <!--  Favorite: Bills  -->
+                <div id="favorite_bi" class = "tab-pane fade">
+                <div class ="container"style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4>Favorite Bills</h4>
+                    </div>
+                    <div class="col-md-9 col-xs-6"></div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table" style = "font-size:18px;">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>Bill ID</th>
+                        <th>Bill Type</th>
+                        <th>Title</th>
+                        <th>Chamber</th>
+                        <th>Introducted On</th>
+                        <th>Sponsor</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      </tr>
+                    </thead>
+                           
+                    <tbody id = "table_body"  >
+                        <tr ng-repeat = "favorite_bill in favorite_bills">
+                        <th style = 'width: 8%;'><button class="btn btn-default btn-lg" ng-click="delete_bill(favorite_bill)"><span id="{{favorite_bill.bill_id}}" class="fa fa-trash" style=" width: 20px; height: 20px;"></span></button></th>
+                        <th>{{favorite_bill.bill_id | uppercase}}</th>
+                        <th>{{favorite_bill.bill_type | uppercase}}</th>
+                        <th style = 'width: 20%;'> {{favorite_bill.official_title}} </th>
+                        <th ng-if = "favorite_bill.chamber == 'house' " style = 'width: 10%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                        <th ng-if = "favorite_bill.chamber == 'senate' " style = 'width: 10%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                        <th ng-if = "favorite_bill.chamber == 'joint' " style = 'width: 10%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Joint</span></image></th>
+                        <th>{{favorite_bill.introduced_on}}</th>
+                        <th>{{favorite_bill.sponsor.title + "."+ favorite_bill.sponsor.last_name +"," + favorite_bill.sponsor.first_name}}</th>
+                        <th><button ng-click="view_detail2(favorite_bill)"  type='button'  class='btn btn-primary'>View Details</button></th>
+                     </tr>
+                    </tbody>
+                </table>
+                </div>
+         <!--        <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "comhouse"></dir-pagination-controls>
+                    </div>  -->
+                </div>   
+            </div>
+                
+                
+                
+                
+                
+                <!--  Favorite Committees  -->
+                <div id="favorite_co" class = "tab-pane fade">
+                <div class ="container"style="border:1px solid #74787c; width: 100%; border-radius:5px;" >
+                <div class = "row"  style = "background-color: #E0E0E0" >
+                    <div class="col-md-3 col-xs-6">
+                            <h4>Favorite Committees</h4>
+                    </div>
+                    <div class="col-md-9 col-xs-6"></div>
+                </div>
+                    <div class="table-responsive" style="border:none">
+                    <table class="table table-hover" id = "whole_table" style = "font-size:18px;">
+                    <thead id = "table_head" style = "font-size:20px;">
+                      <tr>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>Chamber</th>
+                        <th>Committee ID</th>
+                        <th>Name</th>
+                        <th>Parent Committee</th>
+                        <th>Sub Committee</th>
+                      </tr>
+                    </thead>
+                           
+                    <tbody id = "table_body"  >
+                        <tr ng-repeat = "favorite_committee in favorite_committees">
+                        <th style = 'width: 8%;'><button class="btn btn-default btn-lg" ng-click="delete_committee(favorite_committee)"><span id="{{favorite_committee.committee_id}}" class="fa fa-trash" style=" width: 20px; height: 20px;"></span></button></th>
+                        <th ng-if = "favorite_committee.chamber == 'house' " style = 'width: 10%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/h.png' style= 'width:18px; height:18px;'><span>&nbsp;House</span></image></th>
+                        <th ng-if = "favorite_committee.chamber == 'senate' " style = 'width: 10%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Senate</span></image></th>
+                        <th ng-if = "favorite_committee.chamber == 'joint' " style = 'width: 10%;'><image src = 'http://cs-server.usc.edu:45678/hw/hw8/images/s.svg' style= 'width:18px; height:18px;'><span>&nbsp;Joint</span></image></th>
+                        <th>{{favorite_committee.committee_id}}</th>
+                        <th>{{favorite_committee.name}}</th>
+                        <th>{{favorite_committee.parent_committee_id}}</th>
+                        <th>{{favorite_committee.subcommittee}}</th>
+                     </tr>
+                    </tbody>
+                </table>
+                </div>
+         <!--        <div class="text-center">
+                    <dir-pagination-controls direction-links="true" boundary-links="true" pagination-id = "comhouse"></dir-pagination-controls>
+                    </div>  -->
+                </div>   
+            </div>
+            
+                                      
+            </div>
+            </div>
+        </div>
+        
+        
+        
+    </div> 
+    </div>
+    </div>
+    </div>
+    
+
+</body>
+</html>
